@@ -36,10 +36,10 @@ class Table():
         
     def get_win(self, user_move: str, computer_move: str):
         if user_move in self.dictionary[computer_move]:
-            return "Win"
+            return "You win!"
         
         elif computer_move in self.dictionary[user_move]:
-            return "Lose"
+            return "You lose!"
         
         else:
             return "Draw" 
