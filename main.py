@@ -4,6 +4,10 @@ import hashlib
 import random
 import string
 from table import Table
+from hmac_generator import HMAC
+from key import Key
+import secrets
+from hmac import compare_digest, digest
 
 def display_moves() -> None:
     print("Available moves:")
@@ -16,8 +20,8 @@ def display_moves() -> None:
 
 def main() -> None:    
         
-    if len(sys.argv[1:]) % 2 != 1:
-        raise ValueError("The amount of arguments must be an odd number. \n Check -help for more help. ") 
+    if len(sys.argv[1:]) % 2 != 1 or len(sys.argv[1:]) == 1:
+        raise ValueError("The amount of arguments must be an odd number greater or equal than 3.") 
 
     if len(set(sys.argv[1:])) != len(sys.argv[1:]):
         raise ValueError("Arguments must be non-repeating strings.")
@@ -25,23 +29,24 @@ def main() -> None:
     table: Table = Table(sys.argv[1:])
     table.show()
     
+    key: Key = Key()
     
-    computer_move:str = random.choice(sys.argv[1:])
+    hmac: HMAC = HMAC(key, algorithm=hashlib.sha3_256)
     
-    hash = hashlib.sha3_256()
+    choice = bytes(random.choice(sys.argv[1:]), "UTF-8")
     
-    hash.update(computer_move.encode())
+    hmac.update(choice)
     
-    print(f"HMAC: \n {hash.hexdigest()}")
+    print(f"HMAC: \n {hmac.hexdigest()}")
     
     display_moves()
     
-    move:str = input("Enter your move:")
+    move:str = input("Enter your move: ")
 
     if move == "?":
         table.show()
         display_moves()
-        move:str = input("Enter your move:")
+        move:str = input("Enter your move: ")
         
     elif move == "0":
         return
@@ -56,9 +61,14 @@ def main() -> None:
         display_moves()
         move:str = input("Enter your move:")
     
+    print(f"HMAC key: \n {key}")
+    print(f"Computer move: {choice.decode()}")
     
-    print(f"Computer move: {computer_move}")
+    guess_hmac = digest(key.get_key(), choice, digest=hashlib.sha3_256).hex()
     
+    print("---------------------------------------")
+    print(f"Computer did not change move: {compare_digest(hmac.hexdigest(), guess_hmac)}") 
+    print("---------------------------------------")
     
 if __name__ == "__main__":
     main()
