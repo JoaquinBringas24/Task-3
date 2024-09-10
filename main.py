@@ -62,6 +62,9 @@ def main() -> None:
         move:str = input("Enter your move:")
     
     print(f"HMAC key: \n {key}")
+    
+    print(table.get_win(sys.argv[int(move)], choice.decode()))
+    
     print(f"Computer move: {choice.decode()}")
     
     guess_hmac = digest(key.get_key(), choice, digest=hashlib.sha3_256).hex()
