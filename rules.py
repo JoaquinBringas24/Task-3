@@ -59,10 +59,11 @@ class Rules():
                     color = Fore.RED
                 
                 print(color + result)
+                print(Fore.RESET)
             
                 guess_hmac = digest(self.key.get_key(), self.hmac.get_hmac(), digest=hashlib.sha3_256).hex()
     
-                print(Fore.CYAN + f"Computer did not change move: {compare_digest(self.hmac.hexdigest(), guess_hmac)}") 
+                print(f"Computer did not change move: {compare_digest(self.hmac.hexdigest(), guess_hmac)}") 
             
                 if result == "You lose!" or result == "You win!":
                     self.playing = False
@@ -93,10 +94,13 @@ class Rules():
             elif move == "0":
                 sys.exit(0)
 
-            try:
-                print(f"Your move: {sys.argv[int(move)]}")
-                self.set_move(sys.argv[int(move)])
+            else:
+                try:
+                    print(Fore.CYAN + f"Your move: {sys.argv[int(move)]}")
+                    print(Fore.RESET)
+                    self.set_move(sys.argv[int(move)])
     
-            except:
-                print(Fore.RED + "Option is not valid. Please try again.")
+                except:
+                    print(Fore.RED + "Option is not valid. Please try again.")
+                    print(Fore.RESET)
             
