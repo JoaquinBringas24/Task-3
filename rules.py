@@ -5,6 +5,7 @@ import sys
 from hmac import compare_digest, digest
 import hashlib
 from key import Key
+from colorama import Fore
 
 class Rules():
     def __init__(self, table: Table) -> None:
@@ -45,22 +46,30 @@ class Rules():
 
                 result = self.table.get_win(self.user_move, self.hmac.choice)
             
-                print(f"Computer move: {self.hmac.choice}")
+                print(Fore.YELLOW + f"Computer move: {self.hmac.choice}")
 
-                print(result)
+                color = ""
+                if result == "Draw":
+                    color = Fore.WHITE
+                
+                if result == "You win!":
+                    color = Fore.GREEN
+                
+                if result == "You lose!":
+                    color = Fore.RED
+                
+                print(color + result)
             
                 guess_hmac = digest(self.key.get_key(), self.hmac.get_hmac(), digest=hashlib.sha3_256).hex()
     
-                print("---------------------------------------")
-                print(f"Computer did not change move: {compare_digest(self.hmac.hexdigest(), guess_hmac)}") 
-                print("---------------------------------------")
+                print(Fore.CYAN + f"Computer did not change move: {compare_digest(self.hmac.hexdigest(), guess_hmac)}") 
             
                 if result == "You lose!" or result == "You win!":
                     self.playing = False
                     break
     
                 self.set_move(None)
-    
+                
     @staticmethod
     def display_moves() -> None:
         print("Available moves:")
@@ -89,7 +98,5 @@ class Rules():
                 self.set_move(sys.argv[int(move)])
     
             except:
-                print("---------------------------------------")
-                print("Option is not valid. Please try again.")
-                print("---------------------------------------")
+                print(Fore.RED + "Option is not valid. Please try again.")
             
